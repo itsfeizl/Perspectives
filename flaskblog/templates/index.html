@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+{% block jumbotrone %}
+    <div class="container-fluid mb-5 steel-background">
+        <div class="container px-3 py-5 text-left jumbotroni">
+                <h1 class="text-light perspectives"></h1>
+                <p class="col-lg-8 text-light" style="font-size: 2rem;">
+                    "Exploring Life, faith, Design, and Code: Gaining New Perspectives".
+                </p>
+        </div>
+    </div>
+    <main class="container mb-5" >
+        {% if posts.items %}
+        <div class="row g-4">
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card border-0 mb-4">
+                            <img src="{{ url_for('static', filename='images/' + posts.items[0].image_filename) }}" height="400" style="height: 400; object-fit: cover" class="border border-1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-5">
+                    <a class="article-title text-decoration-none link-wrapper" href="{{ url_for('post', post_id=posts.items[0].id) }}">
+                        <h1 class="mb-3">{{ posts.items[0].title }}</h1>
+                        <p class='fade-text text-muted'>{{ ' '.join(posts.items[0].content.split()[:20]) }}</p>
+                    </a>
+                </div>
+                <div class="d-flex align-items-center">
+                    <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pic/' + posts.items[0].author.image_file) }}">
+                    <small class="me-3"><a class="mr-2" href="{{ url_for('user_posts', username=posts.items[0].author.username ) }}">{{ posts.items[0].author.username }}</a></small>
+                    <div class="rounded-circle " style="height:5px; width: 5px; margin-right: 10px; background-color: grey;"></div>
+                    <small class="text-muted">{{ posts.items[0].date_posted.strftime("%b %d, %Y") }}</small>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </main>
+{% endblock %}
+{% block content%}
+    <div class="row g-4">
+        {% for post in posts.items[1:]: %}
+            <div class="col-md-6">
+                <div class="card border-0 mb-4">
+                    <img src="{{ url_for('static', filename='images/' + post.image_filename) }}" alt="Card image cap" height="200" style="height: 200; object-fit: cover;" class="border border-1">
+                    <div class="card-body px-0 py-3">
+                        <a class="article-title text-decoration-none link-wrapper" href="{{ url_for('post', post_id=post.id) }}">
+                            <h5 class="card-title">{{ post.title }}</h5>
+                            <p class="fade-text">
+                                {{ ' '.join(post.content.split()[:20]) }}
+                            </p>
+                        </a>
+                        <div class="d-flex align-items-center">
+                            <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pic/' + post.author.image_file) }}">
+                            <small class="me-3"><a class="mr-2" href="{{ url_for('user_posts', username=post.author.username ) }}">{{ post.author.username }}</a></small>
+                            <div class="rounded-circle " style="height:5px; width: 5px; margin-right: 10px; background-color: grey;"></div>
+                            <small class="text-muted">{{ post.date_posted.strftime("%b %d, %Y") }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+        {% if page_num %}
+            {% if posts.page == page_num %}
+                <a class="btn btn-info mb-4" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+            {% else %}
+                <a class="btn btn-outline-info mb-4" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+            {% endif %}
+        {% else %}
+            ...
+        {% endif %}
+    {% endfor %}
+{% endblock content %}
